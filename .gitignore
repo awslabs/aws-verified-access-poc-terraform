@@ -6,3 +6,4 @@ plan.out
 .terraform.lock.hcl
 secret.auto.tfvars
 terraform.tfvars
+backend.tf

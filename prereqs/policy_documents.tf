@@ -7,23 +7,18 @@ locals {
 
 data "aws_iam_policy_document" "verified_access_policy" {
   statement {
-    # in the `ManageVerifiedAccess` statement below, ARNs are not used
-    # for the Verified Access service, so a `*` is required for the `resource`
-
     sid = "ManageVerifiedAccess"
 
+    # The following actions only support the all resources wildcard (*)
     actions = [
-      "organizations:Describe*",
-      "organizations:List*",
-      "sso:DescribeInstance",
       "verified-access:AllowVerifiedAccess",
       "ec2:DescribeVerifiedAccessTrustProviders",
-      "ec2:CreateVerifiedAccessTrustProvider",
-      "ec2:DeleteVerifiedAccessTrustProvider",
-      "ec2:AttachVerifiedAccessTrustProvider",
-      "ec2:DetachVerifiedAccessTrustProvider",
       "ec2:DescribeVerifiedAccessInstances",
       "ec2:DescribeVerifiedAccessGroups",
+      "organizations:Describe*",
+      "organizations:ListAccounts",
+      "organizations:ListRoots",
+      "organizations:ListAWSServiceAccessForOrganization",
     ]
 
     resources = [
@@ -35,6 +30,11 @@ data "aws_iam_policy_document" "verified_access_policy" {
     sid = "ManageEc2"
 
     actions = [
+      "sso:DescribeInstance",
+      "ec2:CreateVerifiedAccessTrustProvider",
+      "ec2:DeleteVerifiedAccessTrustProvider",
+      "ec2:AttachVerifiedAccessTrustProvider",
+      "ec2:DetachVerifiedAccessTrustProvider",
       "ec2:CreateVerifiedAccessInstance",
       "ec2:ModifyVerifiedAccessInstance",
       "ec2:DeleteVerifiedAccessInstance",
@@ -48,6 +48,7 @@ data "aws_iam_policy_document" "verified_access_policy" {
     ]
 
     resources = [
+      "arn:aws:sso:::instance/ssoins-*",
       "arn:aws:ec2:${var.region}:${var.ava_account_id}:verified-access-instance/*",
       "arn:aws:ec2:${var.region}:${var.ava_account_id}:verified-access-trust-provider/*",
       "arn:aws:ec2:${var.region}:${var.ava_account_id}:verified-access-group/*",
@@ -89,28 +90,20 @@ data "aws_iam_policy_document" "ram_policy" {
 
 data "aws_iam_policy_document" "app_policy" {
   statement {
-    sid = "ManageInfra"
+    # The `*` for resources is limited to read-only actions unless
+    # otherwise specified in trailing comments
+    sid = "ReadInfra"
 
     actions = [
       "sso:GetSsoStatus",
       "sso:GetApplicationAssignmentConfiguration",
-      "sso:PutApplicationAssignmentConfiguration",
-      "sso:PutApplicationAuthenticationMethod",
       "sso:GetManagedApplicationInstance",
-      "sso:CreateManagedApplicationInstance",
-      "sso:UpdateManagedApplicationInstance",
-      "sso:DeleteManagedApplicationInstance",
-      "sso:CreateApplication",
       "sso:GetSharedSsoConfiguration",
       "sso:ListApplications",
-      "sso:PutApplicationGrant",
-      "sso:PutApplicationAccessScope",
-      "signin:CreateTrustedIdentityPropagationApplicationForConsole",
       "signin:ListTrustedIdentityPropagationApplicationForConsole",
       "route53:ListHostedZones",
       "route53:GetHostedZone",
       "route53:ListTagsForResource",
-      "route53:ChangeResourceRecordSets",
       "route53:ListResourceRecordSets",
       "route53:GetChange",
       "elasticloadbalancing:Describe*",
@@ -124,15 +117,12 @@ data "aws_iam_policy_document" "app_policy" {
       "ec2:Get*",
       "ecs:Describe*",
       "ecs:List*",
-      "ecs:RegisterTaskDefinition",
-      "ecs:DeregisterTaskDefinition",
       "logs:Describe*",
       "logs:List*",
       "acm:Describe*",
       "acm:List*",
-      "ec2:*VerifiedAccess*",
       "application-autoscaling:Describe*",
-      "iam:CreateServiceLinkedRole",
+      "ecs:DeregisterTaskDefinition", # This action only supports the all resources wildcard (*)
     ]
 
     resources = [
@@ -141,9 +131,21 @@ data "aws_iam_policy_document" "app_policy" {
   }
 
   statement {
-    sid = "ManageAppInfra"
+    sid = "ManageInfra"
 
     actions = [
+      "sso:PutApplicationAssignmentConfiguration",
+      "sso:PutApplicationAuthenticationMethod",
+      "sso:CreateManagedApplicationInstance",
+      "sso:UpdateManagedApplicationInstance",
+      "sso:DeleteManagedApplicationInstance",
+      "sso:CreateApplication",
+      "sso:PutApplicationGrant",
+      "sso:PutApplicationAccessScope",
+      "signin:CreateTrustedIdentityPropagationApplicationForConsole",
+      "route53:ChangeResourceRecordSets",
+      "ecs:RegisterTaskDefinition",
+      "ec2:*VerifiedAccess*",
       "ec2:CreateVpc",
       "ec2:DeleteVpc",
       "ec2:CreateInternetGateway",
@@ -194,6 +196,7 @@ data "aws_iam_policy_document" "app_policy" {
       "iam:*Role",
       "iam:*RolePolicy",
       "iam:*Policy",
+      "iam:CreateServiceLinkedRole",
       "ecs:CreateCluster",
       "ecs:DeleteCluster",
       "ecs:PutClusterCapacityProviders",
@@ -232,8 +235,13 @@ data "aws_iam_policy_document" "app_policy" {
     ]
 
     resources = [
+      "arn:aws:sso:::instance/ssoins-*",
+      "arn:aws:sso::${local.app_account_id}:application/*/*",
+      "arn:aws:sso::aws:applicationProvider/verified-access",
       "arn:aws:iam::${local.app_account_id}:role/ava*",
       "arn:aws:iam::${local.app_account_id}:policy/ava*",
+      "arn:aws:iam::${var.ava_account_id}:role/*",
+      "arn:aws:route53:::hostedzone/*",
       "arn:aws:acm:${var.region}:${local.app_account_id}:certificate/*",
       "arn:aws:ecs:${var.region}:${local.app_account_id}:cluster/ecs-${var.app_name}",
       "arn:aws:ecs:${var.region}:${local.app_account_id}:service/ecs-${var.app_name}/${var.app_name}-application",

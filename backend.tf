@@ -3,10 +3,10 @@
 
 terraform {
   backend "s3" {
-    region         = "<region>"
+    region         = "us-west-2"
     encrypt        = true
-    bucket         = "<bucket_name_for_tf_state>" # should match name defined in prereqs deployment
+    bucket         = "tfstate-us-west-2-502191026122-ava-app1"
     key            = "terraform.tfstate"
-    dynamodb_table = "<table_name_for_tf_state_locking>" # should match name defined in prereqs deployment
+    dynamodb_table = "terraform-locking-ava-app1"
   }
 }

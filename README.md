@@ -79,7 +79,7 @@ The Prerequisites deployment performs the following steps:
 ##### Prereq Deployment Steps
 
 1. To deploy resources to an AWS account, you must first authenticate using your terminal
-2. In your terminal, navigate to the top-level of this repo, then `cd prereqs`
+2. Navigate to the top-level of this repo, then `cd prereqs`
 3. Copy `example_terraform.tfvars` and rename to `terraform.tfvars`. Update the variables and config for your environment
    a. Ensure you set the region variable to the same region as your AWS IAM Identity Center instance
 4. Run `terraform init` to initialize
@@ -90,9 +90,9 @@ The Prerequisites deployment performs the following steps:
 
 ##### VA Deployment Steps
 
-1. In your terminal, navigate to the top-level of this repo
+1. Navigate to the top-level of this repo
 2. Copy `example_terraform.tfvars` and rename to `terraform.tfvars`. Update the variables and config for your environment
-3. Open `backend.tf` and update the `bucket` and `dynamodb_table` values created in the Prerequisites deployment (its available as part of the Terraform output)
+3. Rename `example_backend.tf` to `backend.tf`. Modify the file by uncommenting the `terraform` block, and updating the `region`, `bucket`, and `dynamodb_table` values created in the Prerequisites deployment (available as part of the Terraform output)
 4. Run `terraform init` to initialize
 5. Run `terraform plan` to review planned deployment changes
 6. Run `terraform apply` and follow steps to deploy
@@ -100,11 +100,11 @@ The Prerequisites deployment performs the following steps:
 This deployment can take 15-20 mins to complete, so be patient. When finished, the Terraform output will contain the app URL.
 Open the URL in a browser. If asked, authenticate with your AWS credentials. If successful, you should be redirected to your application!
 
-#### Deployment Removal
+#### Deployments Removal
 
 To completely remove the resources for this proof of concept, the proper order is required.
 
-1. In your terminal, navigate to the top-level of this repo
+1. Navigate to the top-level of this repo
 2. Run `terraform destroy` and follow the prompts
 3. Run `cd prereqs` to navigate to the prereqs deployment directory
 4. Run `terraform destroy` and follow the prompts
@@ -133,6 +133,10 @@ I am open to contributions to extend this product. Feel free to reach out with q
 ## Project Status
 
 Active.
+
+## Best Practices
+
+The IAM policies generated for use in this proof of concept generally follow [least priviledge principles](https://docs.aws.amazon.com/wellarchitected/latest/framework/sec_permissions_least_privileges.html). Some policy actions only support the all resources wildcard (*). Code comments are used in the policy documents where this applies.
 
 ## Security
 
