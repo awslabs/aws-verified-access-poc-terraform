@@ -114,7 +114,7 @@ Reach out to [avanbece@amazon.com](mailto:avanbece@amazon.com) for all inquiries
 
 ## Contributing
 
-I am open to contributions to extend this product. Feel free to reach out with questions. I will review all merge requests. Create an issue [here](https://gitlab.aws.dev/avanbece/verified_access_tf/-/issues/new).
+I am open to contributions to extend this product. Feel free to reach out with questions. I will review all merge requests. Create an issue [here](https://github.com/awslabs/aws-verified-access-poc-terraform/issues/new).
 
 ## Authors and Acknowledgment
 
