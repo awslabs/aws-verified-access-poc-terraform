@@ -84,7 +84,7 @@ The Prerequisites deployment performs the following steps:
    a. Ensure you set the region variable to the same region as your AWS IAM Identity Center instance
 4. Run `terraform init` to initialize
 5. Run `terraform plan` to review planned deployment changes
-6. Run `terraform apply` and follow steps to deploy
+6. Run `terraform apply` and follow the prompts
 
 #### Verified Access Deployment
 
@@ -99,6 +99,15 @@ The Prerequisites deployment performs the following steps:
 
 This deployment can take 15-20 mins to complete, so be patient. When finished, the Terraform output will contain the app URL.
 Open the URL in a browser. If asked, authenticate with your AWS credentials. If successful, you should be redirected to your application!
+
+#### Deployment Removal
+
+To completely remove the resources for this proof of concept, the proper order is required.
+
+1. In your terminal, navigate to the top-level of this repo
+2. Run `terraform destroy` and follow the prompts
+3. Run `cd prereqs` to navigate to the prereqs deployment directory
+4. Run `terraform destroy` and follow the prompts
 
 ### Deployment Pipeline
 
