@@ -1,4 +1,4 @@
-# Deploy an application behind AWS Verified Access using Terraform
+# Deploy an Application Behind AWS Verified Access using Terraform
 
 ## Description
 
